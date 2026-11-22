@@ -235,7 +235,7 @@ elif page == "Dashboard":
         d["Risk"] = [predict_single_lake_risk(row_to_df(d.iloc[i])) for i in range(len(d))]
         
         # تنعيم البيانات وتجميعها لتظهر بشكل ناعم وخالٍ من التعريجات المتداخلة
-        d = d.set_index("Datetime").resample("3ME").mean().reset_index()
+        d = d.set_index("Datetime").resample("M").mean().reset_index()
 
         first_yr, last_yr = int(d["Datetime"].dt.year.min()), int(d["Datetime"].dt.year.max())
         span = max(1, last_yr - first_yr)
