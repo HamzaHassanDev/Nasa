@@ -146,12 +146,13 @@ def get_css(page):
     raw_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* إخفاء شريط وأزرار Streamlit العلوية والجانبية بالكامل ليكون الموقع احترافياً ونظيفاً 100% */
+#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDeployButton"], [data-testid="stDecoration"],
+[data-testid="stStatusWidget"], header[data-testid="stHeader"] { display:none !important; visibility:hidden !important; height: 0 !important; }
+
 html, body, .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp label, .stApp button,
 .stApp input, div[data-testid="stMarkdownContainer"] { font-family: 'Inter', 'Segoe UI', sans-serif; }
-
-#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDeployButton"], [data-testid="stDecoration"],
-[data-testid="stStatusWidget"] { display:none !important; visibility:hidden; }
-header[data-testid="stHeader"] { background: transparent; height: 0; }
 
 .stApp { background: linear-gradient(135deg,#c2d7f8 0%,#dbe8fc 50%,#c6d9f7 100%); color:__NAVY__; color-scheme: light; }
 .stApp h1,.stApp h2,.stApp h3,.stApp h4,.stApp p,.stApp label { color:__NAVY__; }
@@ -176,10 +177,6 @@ section[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"] { ba
 section[data-testid="stSidebar"] button[kind="primary"] p,
 section[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"] p { font-weight: 700; }
 .sb-logo { display:flex; justify-content:center; padding: 18px 0 30px 0; }
-
-/* زر إظهار القائمة الجانبية على الموبايل */
-[data-testid="stSidebarNav"] { display: block !important; }
-button[kind="header"] { background-color: #0f2a5c !important; color: white !important; border-radius: 50% !important; }
 
 .gwcard, div[data-testid="stVerticalBlock"]:has(> div[data-testid="stElementContainer"] .cardmark),
 div[data-testid="stVerticalBlock"]:has(> div.element-container .cardmark) {
