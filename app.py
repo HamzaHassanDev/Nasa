@@ -233,15 +233,20 @@ elif page == "Dashboard":
         d = lake_hist.copy()
         d["Datetime"] = pd.to_datetime(d["Year"].astype(str) + "-" + d["Month"].astype(str).str.zfill(2) + "-01")
         d["Risk"] = [predict_single_lake_risk(row_to_df(d.iloc[i])) for i in range(len(d))]
-        first_yr, last_yr = int(d["Year"].min()), int(d["Year"].max())
+        
+        # تنعيم البيانات وتجميعها لتظهر بشكل ناعم وخالٍ من التعريجات المتداخلة
+        d = d.set_index("Datetime").resample("3M").mean().reset_index()
+
+        first_yr, last_yr = int(d["Datetime"].dt.year.min()), int(d["Datetime"].dt.year.max())
         span = max(1, last_yr - first_yr)
-        early = d[d["Year"] <= first_yr + 1]["Area_km2"].mean()
-        late = d[d["Year"] >= last_yr - 1]["Area_km2"].mean()
+        early = d[d["Datetime"].dt.year <= first_yr + 1]["Area_km2"].mean()
+        late = d[d["Datetime"].dt.year >= last_yr - 1]["Area_km2"].mean()
         growth = float(np.clip((late - early) / (max(early, 0.05) * span), -0.02, 0.07))
-        clim = d.groupby("Month")[["Area_km2", "d_glacier_km", "Rain_mm", "Temp_C", "Snow_Depth_m"]].mean()
+        clim = d.groupby(d["Datetime"].dt.month)[["Area_km2", "d_glacier_km", "Rain_mm", "Temp_C", "Snow_Depth_m"]].mean()
         last_dt = d["Datetime"].iloc[-1]
+        
         fut = []
-        for step in range(1, 37):
+        for step in range(1, 37, 3):
             dt = last_dt + pd.DateOffset(months=step)
             c = clim.loc[dt.month] if dt.month in clim.index else clim.mean()
             ya = step / 12.0
@@ -254,9 +259,8 @@ elif page == "Dashboard":
                 Snow_Depth_m=max(0.02, c["Snow_Depth_m"]),
             )
             fut.append({"Datetime": dt, "Risk": predict_single_lake_risk(fr), "Phase": "Forecast"})
+            
         tl = pd.concat([d[["Datetime", "Risk"]].assign(Phase="History"), pd.DataFrame(fut)], ignore_index=True)
-        tl["Risk"] = tl["Risk"].rolling(2, min_periods=1).mean()
-
         y_dom = dynamic_y_domain(tl["Risk"], pad=8.0, min_span=24.0)
 
         base = alt.Chart(tl).encode(
@@ -276,7 +280,7 @@ elif page == "Dashboard":
                 color=alt.Color("Phase:N", scale=alt.Scale(domain=["History", "Forecast"], range=["#2563eb", "#ef4444"]))
             )
             + alt.Chart(pd.DataFrame({"c": [last_dt]})).mark_rule(strokeDash=[4, 4], color=NAVY).encode(x="c:T")
-        ).properties(height=380).configure(background="transparent").configure_view(strokeWidth=0).configure_axis(
+        ).properties(height=360).configure(background="transparent").configure_view(strokeWidth=0).configure_axis(
             labelColor=NAVY, titleColor=NAVY, gridColor="#c4d5f0"
         ).configure_legend(labelColor=NAVY, titleColor=NAVY)
         show_chart(chart)

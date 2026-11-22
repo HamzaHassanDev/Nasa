@@ -158,9 +158,9 @@ header[data-testid="stHeader"] { background: transparent; height: 0; }
 .block-container { padding: 1.5rem 2rem 3rem 2rem; max-width: 1340px; position: relative; z-index: 1; }
 __BOTTOM__
 
-section[data-testid="stSidebar"] { background: linear-gradient(180deg,#10285a 0%,#0a1b40 100%);}
+section[data-testid="stSidebar"] { background: linear-gradient(180deg,#10285a 0%,#0a1b40 100%); z-index: 99999; }
 section[data-testid="stSidebar"] > div { padding-top: 0.5rem; }
-section[data-testid="stSidebar"] [data-testid="stSidebarHeader"] { display:none; }
+section[data-testid="stSidebar"] [data-testid="stSidebarHeader"] { display:flex; align-items:center; justify-content:space-between; }
 section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { gap: .4rem; }
 section[data-testid="stSidebar"] * { color:#ffffff !important; }
 section[data-testid="stSidebar"] button {
@@ -176,6 +176,10 @@ section[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"] { ba
 section[data-testid="stSidebar"] button[kind="primary"] p,
 section[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"] p { font-weight: 700; }
 .sb-logo { display:flex; justify-content:center; padding: 18px 0 30px 0; }
+
+/* زر إظهار القائمة الجانبية على الموبايل */
+[data-testid="stSidebarNav"] { display: block !important; }
+button[kind="header"] { background-color: #0f2a5c !important; color: white !important; border-radius: 50% !important; }
 
 .gwcard, div[data-testid="stVerticalBlock"]:has(> div[data-testid="stElementContainer"] .cardmark),
 div[data-testid="stVerticalBlock"]:has(> div.element-container .cardmark) {
