@@ -234,8 +234,9 @@ elif page == "Dashboard":
         d["Datetime"] = pd.to_datetime(d["Year"].astype(str) + "-" + d["Month"].astype(str).str.zfill(2) + "-01")
         d["Risk"] = [predict_single_lake_risk(row_to_df(d.iloc[i])) for i in range(len(d))]
         
-        # تنعيم البيانات وتجميعها لتظهر بشكل ناعم وخالٍ من التعريجات المتداخلة
-        d = d.set_index("Datetime").resample("M").mean().reset_index()
+        # معالجة وتعديل التوقيت بدقة لمنع أي أخطاء في الـ resample مع أحدث إصدارات Pandas
+        d["Datetime"] = pd.to_datetime(d["Datetime"])
+        d = d.set_index("Datetime").resample("ME").mean().reset_index()
 
         first_yr, last_yr = int(d["Datetime"].dt.year.min()), int(d["Datetime"].dt.year.max())
         span = max(1, last_yr - first_yr)
