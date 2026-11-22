@@ -147,9 +147,14 @@ def get_css(page):
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* إخفاء شريط وأزرار Streamlit العلوية والجانبية بالكامل ليكون الموقع احترافياً ونظيفاً 100% */
-#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDeployButton"], [data-testid="stDecoration"],
-[data-testid="stStatusWidget"], header[data-testid="stHeader"] { display:none !important; visibility:hidden !important; height: 0 !important; }
+/* إخفاء تام لأزرار وشريط Streamlit العلوي والجانبي و زر Manage app نهائياً */
+#MainMenu, footer, header, [data-testid="stHeader"], [data-testid="stToolbar"], 
+[data-testid="stDecoration"], [data-testid="stStatusWidget"], .stDeployButton,
+iframe[title="streamlit_app.manage"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+}
 
 html, body, .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp label, .stApp button,
 .stApp input, div[data-testid="stMarkdownContainer"] { font-family: 'Inter', 'Segoe UI', sans-serif; }
