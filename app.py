@@ -22,7 +22,7 @@ st.set_page_config(
     page_title="GlacierWatch",
     page_icon="🏔️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 page_names = ["Home", "Dashboard", "What-If Simulator", "About"]
@@ -76,6 +76,14 @@ with st.sidebar:
             args=(name,),
             type="primary" if page == name else "secondary",
         )
+
+
+with st.container(key="topnav"):
+    _cols = st.columns(len(NAV), gap="small")
+    for _c, (name, ic) in zip(_cols, NAV):
+        with _c:
+            st.button(name, icon=ic, key=f"top_{name}", on_click=go, args=(name,),
+                      type="primary" if page == name else "secondary", use_container_width=True)
 
 
 def lake_picker(key):
@@ -165,7 +173,7 @@ elif page == "Dashboard":
         lat, lon = float(r["Latitude"]), float(r["Longitude"])
         m = folium.Map(
             location=[lat, lon],
-            zoom_start=13,
+            zoom_start=14,max_zoom=18,
             tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
             attr="Esri World Imagery",
             zoom_control=False,
@@ -191,6 +199,8 @@ elif page == "Dashboard":
             fill_opacity=0.45,
             popup=f"<b>{lake}</b><br>Risk: {score:.1f}%",
         ).add_to(m)
+        folium.Marker([lat, lon], tooltip=f"{lake} (approx. coordinates)",
+                      icon=folium.Icon(color="red", icon="tint", prefix="fa")).add_to(m)
         m.get_root().html.add_child(
             folium.Element(
                 "<div style='position:fixed;top:14px;right:14px;z-index:9999;background:rgba(15,42,92,.82);color:#fff;"
@@ -234,9 +244,8 @@ elif page == "Dashboard":
         d["Datetime"] = pd.to_datetime(d["Year"].astype(str) + "-" + d["Month"].astype(str).str.zfill(2) + "-01")
         d["Risk"] = [predict_single_lake_risk(row_to_df(d.iloc[i])) for i in range(len(d))]
         
-        # معالجة وتعديل التوقيت بدقة لمنع أي أخطاء في الـ resample مع أحدث إصدارات Pandas
-        d["Datetime"] = pd.to_datetime(d["Datetime"])
-        d = d.set_index("Datetime").resample("ME").mean().reset_index()
+        num = ["Risk", "Area_km2", "d_glacier_km", "Rain_mm", "Temp_C", "Snow_Depth_m"]
+        d = d.groupby("Datetime", as_index=False)[num].mean().sort_values("Datetime").reset_index(drop=True)
 
         first_yr, last_yr = int(d["Datetime"].dt.year.min()), int(d["Datetime"].dt.year.max())
         span = max(1, last_yr - first_yr)

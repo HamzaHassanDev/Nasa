@@ -1,6 +1,6 @@
-streamlit
-pandas
+streamlit>=1.40
+pandas>=2.2
 numpy
+altair>=5
 folium
-altair
-scikit-learn
+scikit-learn==1.9.1

@@ -145,16 +145,24 @@ def get_css(page):
 
     raw_css = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+500;600;700;800&display=swap');
 
-/* إخفاء تام لأزرار وشريط Streamlit العلوي والجانبي و زر Manage app نهائياً */
-#MainMenu, footer, header, [data-testid="stHeader"], [data-testid="stToolbar"], 
-[data-testid="stDecoration"], [data-testid="stStatusWidget"], .stDeployButton,
-iframe[title="streamlit_app.manage"] {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-}
+/* hide Streamlit chrome but keep layout; no host branding */
+#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"],
+[data-testid="stStatusWidget"], .stDeployButton, [data-testid="stSidebarCollapsedControl"],
+[data-testid="stExpandSidebarButton"], [data-testid="stSidebarCollapseButton"],
+iframe[title="streamlit_app.manage"], [class*="viewerBadge"], [data-testid="manage-app-button"] {
+    display: none !important; visibility: hidden !important; }
+header[data-testid="stHeader"] { background: transparent !important; height: 0 !important; min-height: 0 !important; }
+section[data-testid="stSidebar"] { display: none !important; }
+.st-key-topnav { position: sticky; top: 0; z-index: 1000; background: #0f2a5c; border-radius: 16px;
+    padding: 6px 8px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(15,42,92,.25); }
+.st-key-topnav button { background: transparent !important; border: 0 !important; color: #fff !important; }
+.st-key-topnav button p { color: #fff !important; font-size: 14px; font-weight: 600; margin: 0; }
+.st-key-topnav button[kind="primary"] { background: #2d5cc8 !important; }
+@media (max-width: 600px) { .st-key-topnav button p { font-size: 11px; } .st-key-topnav button { padding: 4px 2px !important; }
+    .st-key-topnav [data-testid="stHorizontalBlock"] { flex-wrap: nowrap !important; gap: 4px !important; }
+    .st-key-topnav [data-testid="stColumn"] { min-width: 0 !important; } }
 
 html, body, .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp label, .stApp button,
 .stApp input, div[data-testid="stMarkdownContainer"] { font-family: 'Inter', 'Segoe UI', sans-serif; }

@@ -8,19 +8,24 @@ HERE = Path(__file__).parent
 
 
 def sanitize_geotechnical_df(d):
+    """Clip only physically impossible values. Real steep slopes are KEPT
+    (the old tanh-squashing made dangerous lakes look moderate)."""
     d = d.copy()
-    if "S_dam_deg" in d.columns:
-        s = d["S_dam_deg"].astype(float)
-        s = np.where(s > 31.0, 21.0 + 7.5 * np.tanh((s - 31.0) / 25.0), s)
-        d["S_dam_deg"] = np.clip(s, 8.0, 31.5)
-    if "S_up_deg" in d.columns:
-        u = d["S_up_deg"].astype(float)
-        u = np.where(u > 35.0, 24.0 + 8.0 * np.tanh((u - 35.0) / 25.0), u)
-        d["S_up_deg"] = np.clip(u, 10.0, 34.0)
-    if "Lake_Name" in d.columns:
-        mask_cb = d["Lake_Name"] == "Cordillera_Blanca_Lake"
-        d.loc[mask_cb, "Latitude"] = -8.995
-        d.loc[mask_cb, "Longitude"] = -77.675
+    for c, lo, hi in [("S_dam_deg", 0.0, 60.0), ("S_up_deg", 0.0, 60.0)]:
+        if c in d.columns:
+            d[c] = np.clip(d[c].astype(float), lo, hi)
+    d = apply_coord_overrides(d)
+    return d
+
+
+def apply_coord_overrides(d):
+    """Use lake_coords_fixed.csv (Lake_Name,Latitude,Longitude) if present."""
+    p = HERE / "lake_coords_fixed.csv"
+    if p.exists() and "Lake_Name" in d.columns:
+        fx = pd.read_csv(p).drop_duplicates("Lake_Name").set_index("Lake_Name")
+        for c in ("Latitude", "Longitude"):
+            m = d["Lake_Name"].map(fx[c])
+            d[c] = m.where(m.notna(), d[c])
     return d
 
 
