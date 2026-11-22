@@ -264,7 +264,7 @@ elif page == "Dashboard":
         y_dom = dynamic_y_domain(tl["Risk"], pad=8.0, min_span=24.0)
 
         base = alt.Chart(tl).encode(
-            x=alt.X("Datetime:T", title=None),
+            x=alt.X("Datetime:T", title=None, axis=alt.Axis(format="%Y", tickCount=6, labelOverlap="greedy")),
             y=alt.Y("Risk:Q", scale=alt.Scale(domain=y_dom, clamp=True), title="Risk Score (%)"),
             tooltip=[
                 alt.Tooltip("Datetime:T", title="Date", format="%Y-%m"),
@@ -282,7 +282,7 @@ elif page == "Dashboard":
             + alt.Chart(pd.DataFrame({"c": [last_dt]})).mark_rule(strokeDash=[4, 4], color=NAVY).encode(x="c:T")
         ).properties(height=360).configure(background="transparent").configure_view(strokeWidth=0).configure_axis(
             labelColor=NAVY, titleColor=NAVY, gridColor="#c4d5f0"
-        ).configure_legend(labelColor=NAVY, titleColor=NAVY)
+        ).configure_legend(labelColor=NAVY, titleColor=NAVY, orient="bottom", direction="horizontal", title=None)
         show_chart(chart)
 
 elif page == "What-If Simulator":
@@ -449,7 +449,7 @@ elif page == "What-If Simulator":
                         "Scenario:N",
                         sort=order,
                         title=None,
-                        axis=alt.Axis(labelAngle=0, labelColor=NAVY, labelFontSize=13, domain=False, ticks=False, grid=False),
+                        axis=alt.Axis(labelAngle=0, labelColor=NAVY, labelFontSize=12, labelLimit=0, labelOverlap=False, labelExpr="split(datum.label, ' ')", domain=False, ticks=False, grid=False),
                     ),
                     y=alt.Y(
                         "Risk:Q",
