@@ -8,24 +8,11 @@ HERE = Path(__file__).parent
 
 
 def sanitize_geotechnical_df(d):
-    """Clip only physically impossible values. Real steep slopes are KEPT
-    (the old tanh-squashing made dangerous lakes look moderate)."""
+    """Clip only physically impossible values (real steep slopes are kept)."""
     d = d.copy()
     for c, lo, hi in [("S_dam_deg", 0.0, 60.0), ("S_up_deg", 0.0, 60.0)]:
         if c in d.columns:
             d[c] = np.clip(d[c].astype(float), lo, hi)
-    d = apply_coord_overrides(d)
-    return d
-
-
-def apply_coord_overrides(d):
-    """Use lake_coords_fixed.csv (Lake_Name,Latitude,Longitude) if present."""
-    p = HERE / "lake_coords_fixed.csv"
-    if p.exists() and "Lake_Name" in d.columns:
-        fx = pd.read_csv(p).drop_duplicates("Lake_Name").set_index("Lake_Name")
-        for c in ("Latitude", "Longitude"):
-            m = d["Lake_Name"].map(fx[c])
-            d[c] = m.where(m.notna(), d[c])
     return d
 
 

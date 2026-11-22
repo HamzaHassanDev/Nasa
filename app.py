@@ -22,7 +22,7 @@ st.set_page_config(
     page_title="GlacierWatch",
     page_icon="🏔️",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="auto",
 )
 
 page_names = ["Home", "Dashboard", "What-If Simulator", "About"]
@@ -76,14 +76,6 @@ with st.sidebar:
             args=(name,),
             type="primary" if page == name else "secondary",
         )
-
-
-with st.container(key="topnav"):
-    _cols = st.columns(len(NAV), gap="small")
-    for _c, (name, ic) in zip(_cols, NAV):
-        with _c:
-            st.button(name, icon=ic, key=f"top_{name}", on_click=go, args=(name,),
-                      type="primary" if page == name else "secondary", use_container_width=True)
 
 
 def lake_picker(key):
@@ -173,7 +165,7 @@ elif page == "Dashboard":
         lat, lon = float(r["Latitude"]), float(r["Longitude"])
         m = folium.Map(
             location=[lat, lon],
-            zoom_start=14,max_zoom=18,
+            zoom_start=13,
             tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
             attr="Esri World Imagery",
             zoom_control=False,
@@ -199,8 +191,6 @@ elif page == "Dashboard":
             fill_opacity=0.45,
             popup=f"<b>{lake}</b><br>Risk: {score:.1f}%",
         ).add_to(m)
-        folium.Marker([lat, lon], tooltip=f"{lake} (approx. coordinates)",
-                      icon=folium.Icon(color="red", icon="tint", prefix="fa")).add_to(m)
         m.get_root().html.add_child(
             folium.Element(
                 "<div style='position:fixed;top:14px;right:14px;z-index:9999;background:rgba(15,42,92,.82);color:#fff;"
@@ -550,3 +540,16 @@ else:
 <h3>A Safer Tomorrow<br>with GlacierWatch</h3><p>Early detection.</p><p>Greater preparedness.</p><p>A safer world.</p></div>""",
             unsafe_allow_html=True,
         )
+
+
+# Mobile: close the sidebar drawer automatically after choosing a page
+components.html(
+    """<script>(function(){var P=window.parent;if(P.__gwNav)return;P.__gwNav=1;
+P.document.addEventListener('click',function(e){
+  var b=e.target.closest('section[data-testid="stSidebar"] button');
+  if(!b||P.innerWidth>992||b.closest('[data-testid="stSidebarHeader"]'))return;
+  setTimeout(function(){var c=P.document.querySelector('[data-testid="stSidebarCollapseButton"] button')
+    ||P.document.querySelector('[data-testid="stSidebarHeader"] button');if(c)c.click();},250);
+},true);})();</script>""",
+    height=0,
+)

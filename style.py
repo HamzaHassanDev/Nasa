@@ -145,24 +145,20 @@ def get_css(page):
 
     raw_css = """
 <style>
-500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* hide Streamlit chrome but keep layout; no host branding */
-#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"],
-[data-testid="stStatusWidget"], .stDeployButton, [data-testid="stSidebarCollapsedControl"],
-[data-testid="stExpandSidebarButton"], [data-testid="stSidebarCollapseButton"],
+/* hide Streamlit chrome, but KEEP the sidebar open/close button (needed on mobile) */
+#MainMenu, footer, [data-testid="stDecoration"], [data-testid="stStatusWidget"], .stDeployButton,
+[data-testid="stAppDeployButton"], [data-testid="stMainMenu"], [data-testid="stToolbarActions"],
 iframe[title="streamlit_app.manage"], [class*="viewerBadge"], [data-testid="manage-app-button"] {
-    display: none !important; visibility: hidden !important; }
-header[data-testid="stHeader"] { background: transparent !important; height: 0 !important; min-height: 0 !important; }
-section[data-testid="stSidebar"] { display: none !important; }
-.st-key-topnav { position: sticky; top: 0; z-index: 1000; background: #0f2a5c; border-radius: 16px;
-    padding: 6px 8px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(15,42,92,.25); }
-.st-key-topnav button { background: transparent !important; border: 0 !important; color: #fff !important; }
-.st-key-topnav button p { color: #fff !important; font-size: 14px; font-weight: 600; margin: 0; }
-.st-key-topnav button[kind="primary"] { background: #2d5cc8 !important; }
-@media (max-width: 600px) { .st-key-topnav button p { font-size: 11px; } .st-key-topnav button { padding: 4px 2px !important; }
-    .st-key-topnav [data-testid="stHorizontalBlock"] { flex-wrap: nowrap !important; gap: 4px !important; }
-    .st-key-topnav [data-testid="stColumn"] { min-width: 0 !important; } }
+    display: none !important;
+}
+header[data-testid="stHeader"] { background: transparent !important; pointer-events: none; box-shadow: none !important; }
+header[data-testid="stHeader"] button, header[data-testid="stHeader"] a { pointer-events: auto; }
+[data-testid="stExpandSidebarButton"], [data-testid="stSidebarCollapsedControl"] {
+    position: fixed !important; top: 12px; left: 12px; z-index: 100000; background: #10285a;
+    border-radius: 12px; box-shadow: 0 6px 16px rgba(15,42,92,.35); }
+[data-testid="stExpandSidebarButton"] *, [data-testid="stSidebarCollapsedControl"] * { color: #ffffff !important; fill: #ffffff !important; }
 
 html, body, .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp label, .stApp button,
 .stApp input, div[data-testid="stMarkdownContainer"] { font-family: 'Inter', 'Segoe UI', sans-serif; }
@@ -297,7 +293,7 @@ div[data-testid="stMainBlockContainer"] div[data-testid="stElementContainer"]:ha
 .safer p { color:#e3edff !important; font-size: 16px; margin: 6px 0; }
 
 @media (max-width: 992px) {
-    .block-container { padding: 1rem 1rem 2.5rem 1rem; }
+    .block-container { padding: 3.6rem 1rem 2.5rem 1rem; }
     .about-top p { max-width: 100%; }
     .hero { height: auto; min-height: 420px; }
     .arrow { display: none; }
